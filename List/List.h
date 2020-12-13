@@ -236,7 +236,7 @@ inline void TList<T>::Ins(TListElem<T>* e, T d)
   tmp->SetNext(e->GetNext());
   tmp->SetPrev(e);
   e->GetNext()->SetPrev(tmp);
-  e->GetNext(tmp)
+  e->GetNext(tmp);
   count++;
 }
 

@@ -10,8 +10,8 @@ class TListElem
 {
 protected:
   T data;
-  TListElem* next;
-  TListElem* prev;
+  TListElem* next = 0;
+  TListElem* prev = 0;
   int count;
 public:
   TListElem(T _data);
@@ -35,8 +35,8 @@ template <class T>
 class TList
 {
 protected:
-  TListElem<T>* root;
-  TListElem<T>* end;
+  TListElem<T>* root = 0;
+  TListElem<T>* end = 0;
   int count;
 public:
   TList();
@@ -99,7 +99,7 @@ template <class T1>
 istream& operator >> (istream& istr, TList<T1> &A) {
   int count;
   istr >> count;
-  for (int i = 0; i < count; i++) {
+  for (int i = 0; i < A.count; i++) {
     T1 d;
     istr >> d;
     A.InsLast(d);
@@ -118,7 +118,7 @@ inline TList<T>::TList()
 template <class T>
 TList<T>::TList(TList<T>& _v)
 {
-  length = _v.count;
+  count = _v.count;
   
   TListElem<T>* i = _v.root;
   TListElem<T>* j = this->root;
@@ -137,14 +137,14 @@ TList<T>::TList(TList<T>& _v)
     if (root == 0)
       root = j;
     end = j;
-    i = i->next();
+    i = i->GetNext();
   }
 }
 
 template <class T>
 TList<T>::~TList()
 {
-  if (this->root != NULL)
+  if (this->root != 0)
   {
     TListElem<T>* i = this->root;
     TListElem<T>* p = 0;
@@ -164,7 +164,7 @@ TList<T>::~TList()
 template <class T>
 TList<T>& TList<T>:: operator =(TList<T>& _v)
 {
-  if (this == &v)
+  if (this == &_v)
     return *this;
 
   if (this->root != 0)
@@ -183,7 +183,7 @@ TList<T>& TList<T>:: operator =(TList<T>& _v)
     count = 0;
   }
 
-  length = _v.count;
+  count = _v.count;
 
   TListElem<T>* i = _v.root;
   TListElem<T>* j = this->root;
@@ -202,8 +202,9 @@ TList<T>& TList<T>:: operator =(TList<T>& _v)
     if (root == 0)
       root = j;
     end = j;
-    i = i->next();
+    i = i->GetNext();
   }
+  return *this;
 }
 
 template<class T>
@@ -221,9 +222,9 @@ template<class T>
 inline void TList<T>::InsLast(T d)
 {
   TListElem<T>* tmp = new TListElem<T>(d);
-  end->SetNext(tmp);
+  tmp->SetNext(end);
   end = tmp;
-  if (root == 0)
+ if (root == 0)
     root = tmp;
   count++;
 }
@@ -250,7 +251,7 @@ inline bool TList<T>::IsFull(void) const
 {
   try
   {
-    TListElem<T>* tmp = new TListElem<T>(d);
+    TListElem<T>* tmp = new TListElem<T>(1);
     delete tmp;
     return false;
   }
@@ -275,7 +276,7 @@ inline TListElem<T>* TList<T>::GetLast()
 template<class T>
 inline void TList<T>::DelFirst()
 {
-  TListElem<T>* i = root;
+  TListElem<T>* i = this->root;
   root = root->GetNext();
   count--;
   delete i;
@@ -284,8 +285,8 @@ inline void TList<T>::DelFirst()
 template<class T>
 inline void TList<T>::DelLast()
 {
-  TListElem<T>* i = end;
-  end = end->GetPrev();
+  TListElem<T>* i = this->end;
+  end = root->GetPrev();
   count--;
   delete i;
 }
@@ -297,7 +298,7 @@ inline void TList<T>::Del(TListElem<T>* e)
   e->GetNext()->SetPrev(e->GetPrev());
 
   count--;
-  delete i;
+  delete e;
 }
 
 template<class T>
